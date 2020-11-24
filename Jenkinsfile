@@ -1,9 +1,20 @@
 pipeline {
   agent any
   stages {
-    stage('Svn pull') {
-      steps {
-        echo 'start Svn pull ${projectName}'
+    stage('Step1') {
+      parallel {
+        stage('Step1') {
+          steps {
+            echo 'step1'
+          }
+        }
+
+        stage('step2') {
+          steps {
+            echo 'Step2'
+          }
+        }
+
       }
     }
 
