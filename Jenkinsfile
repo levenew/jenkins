@@ -3,7 +3,6 @@ pipeline {
   stages {
     stage('Svn pull') {
       steps {
-        tool(name: 'maven', type: 'Maven')
         echo 'start Svn pull ${projectName}'
       }
     }
