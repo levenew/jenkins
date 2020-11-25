@@ -18,6 +18,12 @@ pipeline {
       }
     }
 
+    stage('123') {
+      steps {
+        echo 'aaaaaa'
+      }
+    }
+
   }
   environment {
     projectName = 'core-support'
