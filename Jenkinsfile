@@ -1,31 +1,44 @@
+def projectName = "core-dependencies"
+def svnUrl = "https://172.23.2.1/svn/jpCore/new2/core-dependencies"
+def credentialsId = "liw"
+
+
 pipeline {
-  agent any
-  stages {
-    stage('Step1') {
-      parallel {
-        stage('Step1') {
-          steps {
-            echo 'step1'
-          }
-        }
-
-        stage('step2') {
-          steps {
-            echo 'Step2'
-          }
-        }
-
-      }
+    agent any
+    tools {
+        maven "Maven"
     }
-
-    stage('123') {
-      steps {
-        echo 'aaaaaa'
-      }
+    stages {
+        stage('Svn pull') {
+            steps {
+                echo "start Svn pull ${projectName}"
+                checkout([$class                : 'SubversionSCM',
+                          additionalCredentials : [],
+                          excludedCommitMessages: '',
+                          excludedRegions       : '',
+                          excludedRevprop       : '',
+                          excludedUsers         : '',
+                          filterChangelog       : false,
+                          ignoreDirPropChanges  : false,
+                          includedRegions       : '',
+                          locations             : [[
+                                                           cancelProcessOnExternalsFail: true,
+                                                           credentialsId               : "${credentialsId}",
+                                                           depthOption                 : 'infinity',
+                                                           ignoreExternalsOption       : true,
+                                                           local                       : '.',
+                                                           remote                      : "${svnUrl}"]],
+                          quietOperation        : true, workspaceUpdater: [$class: 'UpdateUpdater'
+                ]])
+            }
+        }
+        stage('Maven build') {
+            when { changeset "**/*.*" }
+            steps {
+                echo "start Maven build ${projectName}"
+                sh "mvn -Dmaven.test.failure.ignore=true clean install"
+            }
+        }
     }
-
-  }
-  environment {
-    projectName = 'core-support'
-  }
 }
+
